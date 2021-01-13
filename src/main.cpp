@@ -51,39 +51,65 @@ void clearEncoders(void) {
   Spitter.resetRotation();
 }
 
-void setTranslation(double degrees, double scale) {
+class Base {
   double list[4];
   double a3pos;
   double a4pos;
-  double radians = degrees * M_PI / 180;
+  double a2pos;
 
-  a3pos = sin(radians) * scale;
-  a4pos = cos(radians) * scale;
-
-  list[0] += (a3pos + a4pos);
-  list[1] += (a3pos - a4pos);
-  list[2] += (-a3pos + a4pos);
-  list[3] += (-a3pos - a4pos);
-
-  Left.setVelocity(list[0], percent);
-  LeftSlave.setVelocity(list[1], percent);
-  Right.setVelocity(list[2], percent);
-  RightSlave.setVelocity(list[3], percent);
-}
-
-void runBase(bool run) {
-  if (run) {
-    Left.spin(forward);
-    LeftSlave.spin(forward);
-    Right.spin(forward);
-    RightSlave.spin(forward);
-  } else {
-    Left.stop(brake);
-    LeftSlave.stop(brake);
-    Right.stop(brake);
-    RightSlave.stop(brake);
+public:
+  Base() {
+    for (int i = 0; i < 4; i++)
+      list[i] = 0;
+    a3pos = 0;
+    a4pos = 0;
+    a2pos = 0;
   }
-}
+  void setTranslation(double degrees, double scale) {
+    double radians = degrees * M_PI / 180;
+
+    a3pos = sin(radians) * scale;
+    a4pos = cos(radians) * scale;
+
+    list[0] = (a3pos + a4pos);
+    list[1] = (a3pos - a4pos);
+    list[2] = (-a3pos + a4pos);
+    list[3] = (-a3pos - a4pos);
+
+    _setVelocity();
+  }
+  void setTurns(double scale) {
+    a2pos = scale;
+
+    list[0] = (a2pos);
+    list[1] = (a2pos);
+    list[2] = (a2pos);
+    list[3] = (a2pos);
+
+    _setVelocity();
+  }
+  void rotate(double rotations) {    
+  }
+  void _setVelocity() {
+    Left.setVelocity(list[0], percent);
+    LeftSlave.setVelocity(list[1], percent);
+    Right.setVelocity(list[2], percent);
+    RightSlave.setVelocity(list[3], percent);
+  }
+  void runBase(bool run) {
+    if (run) {
+      Left.spin(forward);
+      LeftSlave.spin(forward);
+      Right.spin(forward);
+      RightSlave.spin(forward);
+    } else {
+      Left.stop(brake);
+      LeftSlave.stop(brake);
+      Right.stop(brake);
+      RightSlave.stop(brake);
+    }
+  }
+};
 
 // define your global instances of motors and other devices here
 
@@ -116,10 +142,131 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  setTranslation(45, 50);
-  runBase(true);
+  clearEncoders();
+  Base b;
+  
+  b.setTranslation(0,20);
+  b.runBase(true);
+  wait(950,msec);
+  b.runBase(false);
+
+  Roller.spin(forward);
+  IntakeLeft.spin(reverse);
+  IntakeRight.spin(reverse);
+  wait(1000,msec);
+  Roller.stop();
+  IntakeLeft.stop();
+  IntakeRight.stop();
+
+  b.setTranslation(90,50);
+  IntakeLeft.spin(reverse);
+  IntakeRight.spin(reverse);
+  b.runBase(true);
+  wait(500,msec);
+  b.runBase(false);
+
+  Roller.spin(forward);
+  Spitter.spin(forward);
+  wait(700,msec);
+  Roller.stop();
+  Spitter.stop();
+  wait(600,msec);
+  IntakeLeft.stop();
+  IntakeRight.stop();
+
+  b.setTranslation(-90,50);
+  b.runBase(true);
+  wait(750,msec);
+  b.runBase(false);
+  wait(100, msec);
+
+  IntakeLeft.spin(forward);
+  IntakeRight.spin(forward);
+  wait(500,msec);
+  IntakeLeft.stop();
+  IntakeRight.stop();
+  
+  b.setTurns(-50);
+  b.runBase(true);
+  wait(230,msec);
+  b.runBase(false);
+  wait(100,msec);
+
+  b.setTranslation(180,30);
+  b.runBase(true);
+  wait(2750,msec);
+  b.runBase(false);
+  wait(100, msec);
+
+  b.setTranslation(90,40);
+  b.runBase(true);
+  wait(750,msec);
+  b.runBase(false);
+
+  Roller.spin(forward);
+  Spitter.spin(forward);
+  wait(400,msec);
+  Roller.stop();
+  wait(400,msec);
+  Spitter.stop();
+
+  b.setTranslation(-90,40);
+  b.runBase(true);
+  wait(750,msec);
+  b.runBase(false);
+
+  b.setTurns(50);
+  b.runBase(true);
+  wait(80,msec);
+  b.runBase(false);
+
+  b.setTranslation(180,30);
+  b.runBase(true);
+  wait(2650,msec);
+  b.runBase(false);
+  wait(100, msec);
+
+  b.setTurns(-50);
+  b.runBase(true);
+  wait(330,msec);
+  b.runBase(false);
+  wait(100,msec);
+
+  b.setTranslation(90,50);
+  IntakeLeft.spin(reverse);
+  IntakeRight.spin(reverse);
+  b.runBase(true);
+  wait(1000,msec);
+  b.runBase(false);
+
+  IntakeLeft.stop();
+  IntakeRight.stop();
+
+  Roller.spin(forward);
+  Spitter.spin(forward);
+  wait(800,msec);
+  Roller.stop();
+  Spitter.stop();
+
+  b.setTranslation(-90,40);
+  b.runBase(true);
+  wait(750,msec);
+  b.runBase(false);
+
+  /*
+  b.setTranslation(45, 50);
+  b.runBase(true);
   wait(1000, msec);
-  runBase(false);
+  b.runBase(false);
+
+  wait(200, msec);
+
+
+  b.setTurns(80);
+  b.runBase(true);
+  wait(1000, msec);
+  b.runBase(false);
+  */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -141,7 +288,6 @@ void usercontrol(void) {
 
   double a3pos;
   double a4pos;
-  double a2pos;
   double a1pos;
 
   int max;
@@ -149,7 +295,7 @@ void usercontrol(void) {
   double ratio;
 
   Spitter.setVelocity(100, percent);
-  Roller.setVelocity(100, percent);
+  Roller.setVelocity(75, percent);
   IntakeLeft.setVelocity(100, percent);
   IntakeRight.setVelocity(100, percent);
 
@@ -190,20 +336,20 @@ void usercontrol(void) {
     if (list[0] != 0)
       Left.spin(vex::directionType::fwd, list[0], vex::velocityUnits::pct);
     else
-      Left.stop(brake);
+      Left.stop();
     if (list[1] != 0)
       LeftSlave.spin(vex::directionType::fwd, list[1], vex::velocityUnits::pct);
     else
-      LeftSlave.stop(brake);
+      LeftSlave.stop();
     if (list[2] != 0)
       Right.spin(vex::directionType::fwd, list[2], vex::velocityUnits::pct);
     else
-      Right.stop(brake);
+      Right.stop();
     if (list[3] != 0)
       RightSlave.spin(vex::directionType::fwd, list[3],
                       vex::velocityUnits::pct);
     else
-      RightSlave.stop(brake);
+      RightSlave.stop();
 
     // Spitter
     if (Controller1.ButtonL1.pressing()) {
