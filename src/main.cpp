@@ -295,7 +295,7 @@ void usercontrol(void) {
   double ratio;
 
   Spitter.setVelocity(100, percent);
-  Roller.setVelocity(75, percent);
+  Roller.setVelocity(50, percent);
   IntakeLeft.setVelocity(100, percent);
   IntakeRight.setVelocity(100, percent);
 
