@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+ｘ‘/*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
 /*    Author:       VEX                                                       */
@@ -6,31 +6,32 @@
 /*    Description:  Competition Template                                      */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
-
+ 
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Left                 motor         1               
-// LeftSlave            motor         2               
-// Right                motor         3               
-// RightSlave           motor         4               
-// IntakeLeft           motor         5               
-// IntakeRight          motor         6               
-// Roller               motor         7               
-// Spitter              motor         8               
-// Controller1          controller                    
-// Controller2          controller                    
-// Encoder              encoder       C, D            
-// Optic                optical       10              
+// Left                 motor         1
+// LeftSlave            motor         2
+// Right                motor         3
+// RightSlave           motor         4
+// IntakeLeft           motor         5
+// IntakeRight          motor         6
+// Roller               motor         7
+// Spitter              motor         8
+// Controller1          controller
+// Controller2          controller
+// EyeHigh              optical       10
+// EyeMid               optical       9
+// EyeLow               optical       11
 // ---- END VEXCODE CONFIGURED DEVICES ----
-
+ 
 #include "vex.h"
-
+ 
 using namespace vex;
-
+ 
 // A global instance of competition
 competition Competition;
-
+ 
 /*---------------------------------------------------------------------------*/
 /*                          Functions for Autonomous/Shortcuts               */
 /*                                                                           */
@@ -40,81 +41,94 @@ competition Competition;
 /*  function is only called once after the cortex has been powered on and    */
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
-
+ 
 void clearEncoders(void) {
-  Brain.Screen.clearScreen();
-  Left.resetRotation();
-  LeftSlave.resetRotation();
-  Right.resetRotation();
-  RightSlave.resetRotation();
-  IntakeLeft.resetRotation();
-  IntakeRight.resetRotation();
-  Roller.resetRotation();
-  Spitter.resetRotation();
+ Brain.Screen.clearScreen();
+ Left.resetRotation();
+ LeftSlave.resetRotation();
+ Right.resetRotation();
+ RightSlave.resetRotation();
+ IntakeLeft.resetRotation();
+ IntakeRight.resetRotation();
+ Roller.resetRotation();
+ Spitter.resetRotation();
 }
-
+ 
 class Base {
-  double list[4];
-  double a3pos;
-  double a4pos;
-  double a2pos;
-
+ double list[4];
+ double a3pos;
+ double a4pos;
+ double a2pos;
+ 
 public:
-  Base() {
-    for (int i = 0; i < 4; i++)
-      list[i] = 0;
-    a3pos = 0;
-    a4pos = 0;
-    a2pos = 0;
-  }
-  void setTranslation(double degrees, double scale) {
-    double radians = degrees * M_PI / 180;
-
-    a3pos = sin(radians) * scale;
-    a4pos = cos(radians) * scale;
-
-    list[0] = (a3pos + a4pos);
-    list[1] = (a3pos - a4pos);
-    list[2] = (-a3pos + a4pos);
-    list[3] = (-a3pos - a4pos);
-
-    _setVelocity();
-  }
-  void setTurns(double scale) {
-    a2pos = scale;
-
-    list[0] = (a2pos);
-    list[1] = (a2pos);
-    list[2] = (a2pos);
-    list[3] = (a2pos);
-
-    _setVelocity();
-  }
-  void rotate(double rotations) {    
-  }
-  void _setVelocity() {
-    Left.setVelocity(list[0], percent);
-    LeftSlave.setVelocity(list[1], percent);
-    Right.setVelocity(list[2], percent);
-    RightSlave.setVelocity(list[3], percent);
-  }
-  void runBase(bool run) {
-    if (run) {
-      Left.spin(forward);
-      LeftSlave.spin(forward);
-      Right.spin(forward);
-      RightSlave.spin(forward);
-    } else {
-      Left.stop(brake);
-      LeftSlave.stop(brake);
-      Right.stop(brake);
-      RightSlave.stop(brake);
-    }
-  }
+ Base() {
+   for (int i = 0; i < 4; i++)
+     list[i] = 0;
+   a3pos = 0;
+   a4pos = 0;
+   a2pos = 0;
+ }
+ void setTranslation(double degrees, double scale) {
+   double radians = degrees * M_PI / 180;
+ 
+   a3pos = sin(radians) * scale;
+   a4pos = cos(radians) * scale;
+ 
+   list[0] = (a3pos + a4pos);
+   list[1] = (a3pos - a4pos);
+   list[2] = (-a3pos + a4pos);
+   list[3] = (-a3pos - a4pos);
+ 
+   _setVelocity();
+ }
+ void setTurns(double scale) {
+   a2pos = scale;
+ 
+   list[0] = (a2pos);
+   list[1] = (a2pos);
+   list[2] = (a2pos);
+   list[3] = (a2pos);
+ 
+   _setVelocity();
+ }
+ void rotate(double rotations) {}
+ void _setVelocity() {
+   Left.setVelocity(list[0], percent);
+   LeftSlave.setVelocity(list[1], percent);
+   Right.setVelocity(list[2], percent);
+   RightSlave.setVelocity(list[3], percent);
+ }
+ void runBase(bool run) {
+   if (run) {
+     Left.spin(forward);
+     LeftSlave.spin(forward);
+     Right.spin(forward);
+     RightSlave.spin(forward);
+   } else {
+     Left.stop(brake);
+     LeftSlave.stop(brake);
+     Right.stop(brake);
+     RightSlave.stop(brake);
+   }
+ }
 };
-
+ 
+void Intake(bool b) {
+ if (b) {
+   IntakeLeft.spin(reverse);
+   IntakeRight.spin(reverse);
+ } else {
+   IntakeLeft.spin(forward);
+   IntakeRight.spin(forward);
+ }
+}
+void IntakeStop() {
+ IntakeLeft.stop();
+ IntakeRight.stop();
+}
+ 
 // define your global instances of motors and other devices here
-
+ 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -124,15 +138,22 @@ public:
 /*  function is only called once after the V5 has been powered on and        */
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
-
+ 
 void pre_auton(void) {
-  // Initializing Robot Configuration. DO NOT REMOVE!
-  vexcodeInit();
-
-  // All activities that occur before the competition starts
-  // Example: clearing encoders, setting servo positions, ...
+ // Initializing Robot Configuration. DO NOT REMOVE!
+ vexcodeInit();
+ 
+ // All activities that occur before the competition starts
+ // Example: clearing encoders, setting servo positions, ...
 }
-
+ 
+int number = 0;
+ 
+void callback(void) {
+ number --;
+ wait(50,msec);
+}
+ 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              Autonomous Task                              */
@@ -142,193 +163,144 @@ void pre_auton(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-
+ 
 void autonomous(void) {
-  clearEncoders();
-  Base b;
-  
-  Optic.isNearObject();
+ 
+ clearEncoders();
+ Base b;
+ Roller.setVelocity(100, percent);
+ Spitter.setVelocity(100, percent);
+ IntakeLeft.setVelocity(100, percent);
+ IntakeRight.setVelocity(100, percent);
+ 
+  Intake(true);
+ Roller.spin(forward);
+ Spitter.spin(forward);
+ 
+ EyeHigh.objectLost(callback);
+ 
+ number = 4;
+ while(number > 0){
+   wait(20,msec);
+ }
+ wait(100,msec);
+ IntakeStop();
+ Roller.stop();
+ Spitter.stop();
+ 
   b.setTranslation(0,20);
-  b.runBase(true);
-  wait(950,msec);
-  b.runBase(false);
-
+ b.runBase(true);
+ wait(950,msec);
+ b.runBase(false);
+ 
+ Roller.spin(forward);
+ IntakeLeft.spin(reverse);
+ IntakeRight.spin(reverse);
+ wait(1000,msec);
+ Roller.stop();
+ IntakeLeft.stop();
+ IntakeRight.stop();
+ 
+ b.setTranslation(90,50);
+ IntakeLeft.spin(reverse);
+ IntakeRight.spin(reverse);
+ b.runBase(true);
+ wait(500,msec);
+ b.runBase(false);
+ 
+ Roller.spin(forward);
+ Spitter.spin(forward);
+ wait(200,msec);
+ Roller.stop();
+ wait(350,msec);
+ Spitter.stop();
+ IntakeLeft.stop();
+ IntakeRight.stop();
+ 
+ b.setTranslation(-90,50);
+ b.runBase(true);
+ wait(750,msec);
+ b.runBase(false);
+ wait(100, msec);
+ 
+ IntakeLeft.spin(forward);
+ IntakeRight.spin(forward);
+ Roller.spin(forward);
+ wait(300,msec);
+ Roller.stop();
+ wait(200,msec);
+ IntakeLeft.stop();
+ IntakeRight.stop();
   Roller.spin(forward);
-  IntakeLeft.spin(reverse);
-  IntakeRight.spin(reverse);
-  wait(900,msec);
-  Roller.stop();
-  IntakeLeft.stop();
-  IntakeRight.stop();
-
-  b.setTranslation(90,50);
-  IntakeLeft.spin(reverse);
-  IntakeRight.spin(reverse);
-  b.runBase(true);
-  wait(500,msec);
-  b.runBase(false);
-
-  Roller.spin(forward);
-  Spitter.spin(forward);
-  wait(500,msec);
-  Roller.stop();
-  Spitter.stop();
-  IntakeLeft.stop();
-  IntakeRight.stop();
-  Roller.spin(forward);
-  Spitter.spin(forward);
-  wait(700,msec);
-  Roller.stop();
-  Spitter.stop();
-  wait(500,msec);
-
-  b.setTranslation(-90,60);
-  b.runBase(true);
-  wait(950,msec);
-  b.runBase(false);
-  wait(100, msec);
-
-  /*
-  Spitter.spin(forward);
-  Roller.spin(forward);
-  wait(800,msec);
-  Spitter.stop();
-  Roller.stop();
-  */
-  IntakeLeft.spin(forward);
-  IntakeRight.spin(forward);
-  wait(500,msec);
-  IntakeLeft.stop();
-  IntakeRight.stop();
-
-  b.setTurns(70);
-  b.runBase(true);
-  wait(655,msec);
-  b.runBase(false);
-  wait(100,msec);
-  
-  IntakeLeft.spin(reverse);
-  IntakeRight.spin(reverse);
-
-  b.setTranslation(90,10);
-  b.runBase(true);
-  wait(4000,msec);
-  b.runBase(false);
-  wait(100, msec);
-
-  b.setTranslation(-90,60);
-  b.runBase(true);
-  wait(200,msec);
-  b.runBase(false);
-  wait(100, msec);
-  /*
-  b.setTranslation(0,20);
-  b.runBase(true);
-  wait(950,msec);
-  b.runBase(false);
-
-  Roller.spin(forward);
-  IntakeLeft.spin(reverse);
-  IntakeRight.spin(reverse);
-  wait(900,msec);
-  Roller.stop();
-  IntakeLeft.stop();
-  IntakeRight.stop();
-
-  b.setTranslation(90,50);
-  IntakeLeft.spin(reverse);
-  IntakeRight.spin(reverse);
-  b.runBase(true);
-  wait(500,msec);
-  b.runBase(false);
-
-  Roller.spin(forward);
-  Spitter.spin(forward);
-  wait(700,msec);
-  Roller.stop();
-  Spitter.stop();
-  wait(600,msec);
-  IntakeLeft.stop();
-  IntakeRight.stop();
-
-  b.setTranslation(-90,50);
-  b.runBase(true);
-  wait(750,msec);
-  b.runBase(false);
-  wait(100, msec);
-
-  IntakeLeft.spin(forward);
-  IntakeRight.spin(forward);
-  wait(500,msec);
-  IntakeLeft.stop();
-  IntakeRight.stop();
-  
-  b.setTurns(-70);
-  b.runBase(true);
-  wait(240,msec);
-  b.runBase(false);
-  wait(100,msec);
-
-  b.setTranslation(180,30);
-  b.runBase(true);
-  wait(2650,msec);
-  b.runBase(false);
-  wait(100, msec);
-
-  b.setTranslation(90,40);
-  b.runBase(true);
-  wait(750,msec);
-  b.runBase(false);
-
-  Roller.spin(forward);
-  Spitter.spin(forward);
-  wait(200,msec);
-  Roller.stop();
-  wait(400,msec);
-  Spitter.stop();
-
-  b.setTranslation(-90,40);
-  b.runBase(true);
-  wait(750,msec);
-  b.runBase(false);
-
-  b.setTranslation(180,30);
-  b.runBase(true);
-  wait(2550,msec);
-  b.runBase(false);
-  wait(100, msec);
-
-  b.setTurns(-50);
-  b.runBase(true);
-  wait(330,msec);
-  b.runBase(false);
-  wait(100,msec);
-
-  b.setTranslation(90,50);
-  IntakeLeft.spin(reverse);
-  IntakeRight.spin(reverse);
-  b.runBase(true);
-  wait(1000,msec);
-  b.runBase(false);
-
-  IntakeLeft.stop();
-  IntakeRight.stop();
-
-  Roller.spin(forward);
-  Spitter.spin(forward);
-  wait(800,msec);
-  Roller.stop();
-  Spitter.stop();
-
-  b.setTranslation(-90,40);
-  b.runBase(true);
-  wait(750,msec);
-  b.runBase(false);
-  */
-
-  
-}
-
+ b.setTurns(-50);
+ b.runBase(true);
+ wait(350,msec);
+ Roller.stop();
+ b.runBase(false);
+ wait(100,msec);
+ 
+ b.setTranslation(180,30);
+ b.runBase(true);
+ wait(2500,msec);
+ b.runBase(false);
+ wait(100, msec);
+ 
+ b.setTranslation(90,40);
+ b.runBase(true);
+ wait(750,msec);
+ b.runBase(false);
+ 
+ Roller.spin(forward);
+ Spitter.spin(forward);
+ wait(400,msec);
+ Roller.stop();
+ wait(400,msec);
+ Spitter.stop();
+ 
+ b.setTranslation(-90,40);
+ b.runBase(true);
+ wait(750,msec);
+ b.runBase(false);
+ 
+ b.setTurns(50);
+ b.runBase(true);
+ wait(80,msec);
+ b.runBase(false);
+ 
+ b.setTranslation(180,30);
+ b.runBase(true);
+ wait(2650,msec);
+ b.runBase(false);
+ wait(100, msec);
+ 
+ b.setTurns(-50);
+ b.runBase(true);
+ wait(330,msec);
+ b.runBase(false);
+ wait(100,msec);
+ 
+ b.setTranslation(90,50);
+ IntakeLeft.spin(reverse);
+ IntakeRight.spin(reverse);
+ b.runBase(true);
+ wait(1000,msec);
+ b.runBase(false);
+ 
+ IntakeLeft.stop();
+ IntakeRight.stop();
+ 
+ Roller.spin(forward);
+ Spitter.spin(forward);
+ wait(1000,msec);
+ Roller.stop();
+ Spitter.stop();
+ 
+ b.setTranslation(-90,40);
+ b.runBase(true);
+ wait(750,msec);
+ b.runBase(false);
+ }
+ 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task                            */
@@ -338,141 +310,141 @@ void autonomous(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-
+ 
 void usercontrol(void) {
-  bool SpitterStop = true;
-  bool RollerStop = true;
-  bool IntakeStop = true;
-
-  double list[4];
-
-  double a3pos;
-  double a4pos;
-  double a1pos;
-
-  int max;
-  double maxvalue;
-  double ratio;
-
-                                                                                                                                                                                                                                Spitter.setVelocity(100, percent);
-  Roller.setVelocity(75, percent);
-  IntakeLeft.setVelocity(100, percent);
-  IntakeRight.setVelocity(100, percent);
-
-  // User control code here, inside the loop
-  while (true) {
-    for (int i = 0; i < 4; i++)
-      list[i] = 0;
-
-    a3pos = Controller1.Axis3.position();
-    a4pos = Controller1.Axis4.position();
-    // a2pos = Controller1.Axis2.position();
-    a1pos = Controller1.Axis1.position();
-
-    list[0] += (a3pos + a4pos + a1pos);
-    list[1] += (a3pos - a4pos + a1pos);
-    list[2] += (-a3pos + a4pos + a1pos);
-    list[3] += (-a3pos - a4pos + a1pos);
-
-    // finds the max value (absolute) of the wheels
-    max = 0;
-    maxvalue = fabs(list[0]);
-    for (int i = 1; i < 4; i++) {
-      if (fabs(list[i]) > maxvalue)
-        max = i;
-    }
-
-    // scales down the values so the ratios of the values stay the same
-    if (maxvalue > 100) {
-      ratio = 100 / maxvalue;
-      for (int i = 0; i < 4; i++)
-        list[i] *= ratio;
-    }
-
-    // scale the speed
-    for (int i = 0; i < 4; i++)
-      list[i] *= 0.8;
-
-    if (list[0] != 0)
-      Left.spin(vex::directionType::fwd, list[0], vex::velocityUnits::pct);
-    else
-      Left.stop();
-    if (list[1] != 0)
-      LeftSlave.spin(vex::directionType::fwd, list[1], vex::velocityUnits::pct);
-    else
-      LeftSlave.stop();
-    if (list[2] != 0)
-      Right.spin(vex::directionType::fwd, list[2], vex::velocityUnits::pct);
-    else
-      Right.stop();
-    if (list[3] != 0)
-      RightSlave.spin(vex::directionType::fwd, list[3],
-                      vex::velocityUnits::pct);
-    else
-      RightSlave.stop();
-
-    // Spitter
-    if (Controller1.ButtonL1.pressing()) {
-      Spitter.spin(forward);
-      SpitterStop = false;
-    } else if (Controller1.ButtonL2.pressing()) {
-      Spitter.spin(reverse);
-      SpitterStop = false;
-    } else if (!SpitterStop) {
-      Spitter.stop();
-      SpitterStop = true;
-    }
-
-    // Roller
-    if (Controller1.ButtonR1.pressing()) {
-      Roller.spin(forward);
-      RollerStop = false;
-    } else if (Controller1.ButtonR2.pressing()) {
-      Roller.spin(reverse);
-      RollerStop = false;
-    } else if (!RollerStop) {
-      Roller.stop();
-      RollerStop = true;
-    }
-
-    // Intake
-    if (Controller2.ButtonR1.pressing()) {
-      IntakeLeft.spin(forward);
-      IntakeRight.spin(forward);
-      IntakeStop = false;
-    } else if (Controller2.ButtonR2.pressing()) {
-      IntakeLeft.spin(reverse);
-      IntakeRight.spin(reverse);
-      IntakeStop = false;
-    } else if (!IntakeStop) {
-      IntakeLeft.stop();
-      IntakeRight.stop();
-      IntakeStop = true;
-    }
-
-    // Run Autonomous
-    if (Controller1.ButtonB.pressing()) {
-      autonomous();
-      task::sleep(300);
-    }
-
-    wait(20, msec);
-  }
+ bool SpitterStop = true;
+ bool RollerStop = true;
+ bool IntakeStop = true;
+ 
+ double list[4];
+ 
+ double a3pos;
+ double a4pos;
+ double a1pos;
+ 
+ int max;
+ double maxvalue;
+ double ratio;
+ 
+ Spitter.setVelocity(100, percent);
+ Roller.setVelocity(100, percent);
+ IntakeLeft.setVelocity(100, percent);
+ IntakeRight.setVelocity(100, percent);
+ 
+ // User control code here, inside the loop
+ while (true) {
+   for (int i = 0; i < 4; i++)
+     list[i] = 0;
+ 
+   a3pos = Controller1.Axis3.position();
+   a4pos = Controller1.Axis4.position();
+   // a2pos = Controller1.Axis2.position();
+   a1pos = Controller1.Axis1.position();
+ 
+   list[0] += (a3pos + a4pos + a1pos);
+   list[1] += (a3pos - a4pos + a1pos);
+   list[2] += (-a3pos + a4pos + a1pos);
+   list[3] += (-a3pos - a4pos + a1pos);
+ 
+   // finds the max value (absolute) of the wheels
+   max = 0;
+   maxvalue = fabs(list[0]);
+   for (int i = 1; i < 4; i++) {
+     if (fabs(list[i]) > maxvalue)
+       max = i;
+   }
+ 
+   // scales down the values so the ratios of the values stay the same
+   if (maxvalue > 100) {
+     ratio = 100 / maxvalue;
+     for (int i = 0; i < 4; i++)
+       list[i] *= ratio;
+   }
+ 
+   // scale the speed
+   for (int i = 0; i < 4; i++)
+     list[i] *= 1;
+ 
+   if (list[0] != 0)
+     Left.spin(vex::directionType::fwd, list[0], vex::velocityUnits::pct);
+   else
+     Left.stop();
+   if (list[1] != 0)
+     LeftSlave.spin(vex::directionType::fwd, list[1], vex::velocityUnits::pct);
+   else
+     LeftSlave.stop();
+   if (list[2] != 0)
+     Right.spin(vex::directionType::fwd, list[2], vex::velocityUnits::pct);
+   else
+     Right.stop();
+   if (list[3] != 0)
+     RightSlave.spin(vex::directionType::fwd, list[3],
+                     vex::velocityUnits::pct);
+   else
+     RightSlave.stop();
+ 
+   // Spitter
+   if (Controller1.ButtonL1.pressing()) {
+     Spitter.spin(forward);
+     SpitterStop = false;
+   } else if (Controller1.ButtonL2.pressing()) {
+     Spitter.spin(reverse);
+     SpitterStop = false;
+   } else if (!SpitterStop) {
+     Spitter.stop();
+     SpitterStop = true;
+   }
+ 
+   // Roller
+   if (Controller1.ButtonR1.pressing()) {
+     Roller.spin(forward);
+     RollerStop = false;
+   } else if (Controller1.ButtonR2.pressing()) {
+     Roller.spin(reverse);
+     RollerStop = false;
+   } else if (!RollerStop) {
+     Roller.stop();
+     RollerStop = true;
+   }
+ 
+   // Intake
+   if (Controller2.ButtonR1.pressing()) {
+     IntakeLeft.spin(forward);
+     IntakeRight.spin(forward);
+     IntakeStop = false;
+   } else if (Controller2.ButtonR2.pressing()) {
+     IntakeLeft.spin(reverse);
+     IntakeRight.spin(reverse);
+     IntakeStop = false;
+   } else if (!IntakeStop) {
+     IntakeLeft.stop();
+     IntakeRight.stop();
+     IntakeStop = true;
+   }
+ 
+   // Run Autonomous
+   if (Controller1.ButtonB.pressing()) {
+     autonomous();
+     task::sleep(300);
+   }
+ 
+   wait(20, msec);
+ }
 }
-
+ 
 //
 // Main will set up the competition functions and callbacks.
 //
 int main() {
-  // Set up callbacks for autonomous and driver control periods.
-  Competition.autonomous(autonomous);
-  Competition.drivercontrol(usercontrol);
-
-  // Run the pre-autonomous function.
-  pre_auton();
-
-  // Prevent main from exiting with an infinite loop.
-  while (true) {
-    wait(100, msec);
-  }
+ // Set up callbacks for autonomous and driver control periods.
+ Competition.autonomous(autonomous);
+ Competition.drivercontrol(usercontrol);
+ 
+ // Run the pre-autonomous function.
+ pre_auton();
+ 
+ // Prevent main from exiting with an infinite loop.
+ while (true) {
+   wait(100, msec);
+ }
 }
