@@ -18,10 +18,9 @@ motor Roller = motor(PORT7, ratio6_1, true);
 motor Spitter = motor(PORT8, ratio18_1, false);
 controller Controller1 = controller(primary);
 controller Controller2 = controller(partner);
-encoder Encoder = encoder(Brain.ThreeWirePort.C);
-optical Low = optical(PORT11);
-optical Mid = optical(PORT9);
-optical High = optical(PORT10);
+optical EyeHigh = optical(PORT10);
+optical EyeMid = optical(PORT9);
+optical EyeLow = optical(PORT11);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
