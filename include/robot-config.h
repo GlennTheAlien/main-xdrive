@@ -13,6 +13,10 @@ extern motor Roller;
 extern motor Spitter;
 extern controller Controller1;
 extern controller Controller2;
+extern encoder Encoder;
+extern optical Low;
+extern optical Mid;
+extern optical High;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

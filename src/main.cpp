@@ -10,16 +10,18 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Left                 motor         1
-// LeftSlave            motor         2
-// Right                motor         3
-// RightSlave           motor         4
-// IntakeLeft           motor         5
-// IntakeRight          motor         6
-// Roller               motor         7
-// Spitter              motor         8
-// Controller1          controller
-// Controller2          controller
+// Left                 motor         1               
+// LeftSlave            motor         2               
+// Right                motor         3               
+// RightSlave           motor         4               
+// IntakeLeft           motor         5               
+// IntakeRight          motor         6               
+// Roller               motor         7               
+// Spitter              motor         8               
+// Controller1          controller                    
+// Controller2          controller                    
+// Encoder              encoder       C, D            
+// Optic                optical       10              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -145,6 +147,7 @@ void autonomous(void) {
   clearEncoders();
   Base b;
   
+  Optic.isNearObject();
   b.setTranslation(0,20);
   b.runBase(true);
   wait(950,msec);
@@ -153,7 +156,81 @@ void autonomous(void) {
   Roller.spin(forward);
   IntakeLeft.spin(reverse);
   IntakeRight.spin(reverse);
-  wait(1000,msec);
+  wait(900,msec);
+  Roller.stop();
+  IntakeLeft.stop();
+  IntakeRight.stop();
+
+  b.setTranslation(90,50);
+  IntakeLeft.spin(reverse);
+  IntakeRight.spin(reverse);
+  b.runBase(true);
+  wait(500,msec);
+  b.runBase(false);
+
+  Roller.spin(forward);
+  Spitter.spin(forward);
+  wait(500,msec);
+  Roller.stop();
+  Spitter.stop();
+  IntakeLeft.stop();
+  IntakeRight.stop();
+  Roller.spin(forward);
+  Spitter.spin(forward);
+  wait(700,msec);
+  Roller.stop();
+  Spitter.stop();
+  wait(500,msec);
+
+  b.setTranslation(-90,60);
+  b.runBase(true);
+  wait(950,msec);
+  b.runBase(false);
+  wait(100, msec);
+
+  /*
+  Spitter.spin(forward);
+  Roller.spin(forward);
+  wait(800,msec);
+  Spitter.stop();
+  Roller.stop();
+  */
+  IntakeLeft.spin(forward);
+  IntakeRight.spin(forward);
+  wait(500,msec);
+  IntakeLeft.stop();
+  IntakeRight.stop();
+
+  b.setTurns(70);
+  b.runBase(true);
+  wait(655,msec);
+  b.runBase(false);
+  wait(100,msec);
+  
+  IntakeLeft.spin(reverse);
+  IntakeRight.spin(reverse);
+
+  b.setTranslation(90,10);
+  b.runBase(true);
+  wait(4000,msec);
+  b.runBase(false);
+  wait(100, msec);
+
+  b.setTranslation(-90,60);
+  b.runBase(true);
+  wait(200,msec);
+  b.runBase(false);
+  wait(100, msec);
+  /*
+  b.setTranslation(0,20);
+  b.runBase(true);
+  wait(950,msec);
+  b.runBase(false);
+
+  Roller.spin(forward);
+  IntakeLeft.spin(reverse);
+  IntakeRight.spin(reverse);
+  wait(900,msec);
   Roller.stop();
   IntakeLeft.stop();
   IntakeRight.stop();
@@ -186,15 +263,15 @@ void autonomous(void) {
   IntakeLeft.stop();
   IntakeRight.stop();
   
-  b.setTurns(-50);
+  b.setTurns(-70);
   b.runBase(true);
-  wait(230,msec);
+  wait(240,msec);
   b.runBase(false);
   wait(100,msec);
 
   b.setTranslation(180,30);
   b.runBase(true);
-  wait(2750,msec);
+  wait(2650,msec);
   b.runBase(false);
   wait(100, msec);
 
@@ -205,7 +282,7 @@ void autonomous(void) {
 
   Roller.spin(forward);
   Spitter.spin(forward);
-  wait(400,msec);
+  wait(200,msec);
   Roller.stop();
   wait(400,msec);
   Spitter.stop();
@@ -215,14 +292,9 @@ void autonomous(void) {
   wait(750,msec);
   b.runBase(false);
 
-  b.setTurns(50);
-  b.runBase(true);
-  wait(80,msec);
-  b.runBase(false);
-
   b.setTranslation(180,30);
   b.runBase(true);
-  wait(2650,msec);
+  wait(2550,msec);
   b.runBase(false);
   wait(100, msec);
 
@@ -252,21 +324,9 @@ void autonomous(void) {
   b.runBase(true);
   wait(750,msec);
   b.runBase(false);
-
-  /*
-  b.setTranslation(45, 50);
-  b.runBase(true);
-  wait(1000, msec);
-  b.runBase(false);
-
-  wait(200, msec);
-
-
-  b.setTurns(80);
-  b.runBase(true);
-  wait(1000, msec);
-  b.runBase(false);
   */
+
+  
 }
 
 /*---------------------------------------------------------------------------*/
@@ -294,8 +354,8 @@ void usercontrol(void) {
   double maxvalue;
   double ratio;
 
-  Spitter.setVelocity(100, percent);
-  Roller.setVelocity(50, percent);
+                                                                                                                                                                                                                                Spitter.setVelocity(100, percent);
+  Roller.setVelocity(75, percent);
   IntakeLeft.setVelocity(100, percent);
   IntakeRight.setVelocity(100, percent);
 
