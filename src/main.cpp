@@ -147,16 +147,16 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
-int number1 = 0;
-int number2 = 0;
+int highConstant = 0;
+int lowConstant = 0;
 
 void callback1(void) {
-  number1--;
+  highConstant--;
   wait(50, msec);
 }
 
 void callback2(void) {
-  number2--;
+  lowConstant--;
   wait(50, msec);
 }
 
@@ -171,7 +171,6 @@ void callback2(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-
   clearEncoders();
   Base b;
   EyeHigh.objectLost(callback1);
@@ -182,14 +181,16 @@ void autonomous(void) {
   IntakeLeft.setVelocity(100, percent);
   IntakeRight.setVelocity(100, percent);
 
+  
   b.setTranslation(0, 20);
   b.runBase(true);
-  wait(950, msec);
+  wait(1150, msec);
   b.runBase(false);
 
-  number2 = 2;
+  lowConstant = 2;
   Intake(true);
-  wait(1500, msec);
+  Spitter.spin(forward);
+  wait(1300, msec);
 
   b.setTranslation(90, 50);
   b.runBase(true);
@@ -197,17 +198,16 @@ void autonomous(void) {
   b.runBase(false);
 
   Roller.spin(forward);
-  Spitter.spin(forward);
 
-  number1 = 2;
-  while (number1 > 0) {
+  highConstant = 2;
+  while (highConstant > 0) {
     wait(20, msec);
   }
 
   wait(150, msec);
   Spitter.stop();
 
-  while (number2 > 0) {
+  while (lowConstant > 0) {
     wait(20, msec);
   }
 
@@ -222,14 +222,14 @@ void autonomous(void) {
 
   Intake(false);
   Roller.spin(reverse);
-  wait(200, msec);
+  wait(100, msec);
   Roller.stop();
   wait(600, msec);
   IntakeStop();
 
   b.setTurns(-50);
   b.runBase(true);
-  wait(225, msec);
+  wait(230, msec);
   b.runBase(false);
 
   b.setTranslation(180, 30);
@@ -240,77 +240,132 @@ void autonomous(void) {
 
   b.setTranslation(90, 40);
   b.runBase(true);
-  wait(600, msec);
+  wait(750, msec);
   b.runBase(false);
 
   Roller.spin(forward);
   Spitter.spin(forward);
 
-  number1 = 1;
-  while (number1 > 0) {
+  highConstant=1;
+  while (highConstant > 0) {
     wait(20, msec);
   }
-
+  
   wait(150, msec);
   Roller.stop();
   Spitter.stop();
 
-  b.setTranslation(-90, 40);
+  b.setTranslation(-75, 60);
   b.runBase(true);
-  wait(750, msec);
+  wait(1500, msec);
   b.runBase(false);
+  
+  b.setTurns(50);
+  b.runBase(true);
+  wait(1200,msec);
+  b.runBase(false);
+
+  b.setTranslation(0,50);
+  b.runBase(true);
+  wait(1000,msec);
+  b.runBase(false);
+  
+  b.setTranslation(190,50);
+  b.runBase(true);
+  wait(1300,msec);
+  b.runBase(false);
+
   /*
+  b.setTranslation(0, 20);
+  b.runBase(true);
+  wait(1150, msec);
+  b.runBase(false);
 
+  lowConstant = 2;
+  Intake(true);
+  Spitter.spin(forward);
+  wait(1500, msec);
 
-
-
-
+  b.setTranslation(90, 50);
+  b.runBase(true);
+  wait(500, msec);
+  b.runBase(false);
 
   Roller.spin(forward);
-  Spitter.spin(forward);
-  wait(400, msec);
-  Roller.stop();
-  wait(400, msec);
+
+  highConstant = 3;
+  while (highConstant > 0) {
+    wait(20, msec);
+  }
+
+  wait(150, msec);
   Spitter.stop();
 
+  while (lowConstant > 0) {
+    wait(20, msec);
+  }
 
+  Roller.stop();
+  IntakeStop();
+
+  b.setTranslation(-90, 50);
+  b.runBase(true);
+  wait(1200, msec);
+  b.runBase(false);
+  wait(100, msec);
+
+  Intake(false);
+  Roller.spin(reverse);
+  wait(800, msec);
+  IntakeStop();
+  Roller.stop();
 
   b.setTurns(50);
   b.runBase(true);
-  wait(80, msec);
+  wait(850, msec);
   b.runBase(false);
 
-  b.setTranslation(180, 30);
-  b.runBase(true);
-  wait(2650, msec);
-  b.runBase(false);
   wait(100, msec);
 
-  b.setTurns(-50);
-  b.runBase(true);
-  wait(330, msec);
-  b.runBase(false);
-  wait(100, msec);
+  lowConstant = 1;
+  Intake(true);
 
-  b.setTranslation(90, 50);
-  IntakeLeft.spin(reverse);
-  IntakeRight.spin(reverse);
+  b.setTranslation(90, 30);
   b.runBase(true);
-  wait(1000, msec);
+  wait(1450, msec);
   b.runBase(false);
-
-  IntakeLeft.stop();
-  IntakeRight.stop();
 
   Roller.spin(forward);
-  Spitter.spin(forward);
-  wait(1000, msec);
-  Roller.stop();
-  Spitter.stop();
 
-  b.setTranslation(-90, 40);
+  while (lowConstant > 0) {
+    wait(20, msec);
+  }
+
+  IntakeStop();
+  Roller.stop();
+
+  b.setTranslation(0, 50);
   b.runBase(true);
-  wait(750, msec);
+  wait(1350, msec);
+  b.runBase(false);
+
+  wait(50, msec);
+
+  b.setTranslation(225, 50);
+  b.runBase(true);
+  wait(800, msec);
+  b.runBase(false);
+  */
+  /*
+  Roller.spin(reverse);
+  Intake(false);
+  wait(2000, msec);
+  Roller.stop();
+  IntakeStop();
+
+  b.setTranslation(-90, 50);
+  b.runBase(true);
+  wait(500, msec);
   b.runBase(false);
   */
 }
@@ -377,7 +432,7 @@ void usercontrol(void) {
 
     // scale the speed
     for (int i = 0; i < 4; i++)
-      list[i] *= 1;
+      list[i] *= 0.8;
 
     if (list[0] != 0)
       Left.spin(vex::directionType::fwd, list[0], vex::velocityUnits::pct);
